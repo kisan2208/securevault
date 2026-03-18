@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecureVault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <div class="container animate-fade">
+        <header class="dashboard-header">
+            <div>
+                <h1>SecureVault Dashboard</h1>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;" id="welcomeText">Welcome back.</p>
+            </div>
+            <button id="logoutBtn" class="btn logout-btn">Logout</button>
+        </header>
+
+        <main>
+            <!-- Upload Area -->
+            <div id="dropZone" class="upload-section glass animate-fade delay-1">
+                <div class="upload-icon">☁️</div>
+                <h3>Drag & Drop your files here</h3>
+                <p style="color: var(--text-muted); margin: 1rem 0;">or click to browse from your device</p>
+                <p style="color: var(--danger); font-size: 0.85rem; margin-bottom: 1rem;">*Maximum file size 100MB. Files expire after 48 hours.</p>
+                <input type="file" id="fileInput" multiple>
+                <button class="btn" style="width: auto; padding: 0.5rem 2rem;" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+                <div id="uploadStatus" style="margin-top: 1rem;"></div>
+            </div>
+
+            <h3 class="animate-fade delay-2">Your Files</h3>
+            <div id="filesGrid" class="files-grid animate-fade delay-2">
+                <!-- File cards will be injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="commentModal" class="modal hidden">
+        <div class="modal-content glass animate-fade">
+            <span class="close-btn" onclick="closeCommentModal()">&times;</span>
+            <h3 style="margin-bottom: 1rem;">Add Comment</h3>
+            <textarea id="commentInput" class="form-control" rows="4" placeholder="Write a comment about this file..."></textarea>
+            <input type="hidden" id="commentFileId">
+            <div id="commentStatus" style="margin-top: 1rem;"></div>
+            <button class="btn btn-primary" style="margin-top: 1rem;" onclick="saveComment()">Save Comment</button>
+        </div>
+    </div>
+
+    <div id="viewModal" class="modal hidden">
+        <div class="modal-content glass animate-fade" style="max-width: 90%; width: 800px; height: 80vh; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 id="viewFileName" style="margin: 0;">View File</h3>
+                <span class="close-btn" onclick="closeViewModal()">&times;</span>
+            </div>
+            <div id="viewContent" style="flex-grow: 1; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Footer - Updated for specific links only -->
+    <footer class="custom-footer">
+        <div class="footer-top">
+            <div class="social-icons">
+                <a href="https://www.instagram.com/_1rayuga_?igsh=MWRtYmxxOWh3MjY2eg==" class="social-icon"
+                    target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                <a href="https://github.com/kisan2208" class="social-icon" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-github"></i></a>
+                <a href="https://youtube.com/@go_beats?si=0_vX-jk1F7nc813b" class="social-icon" target="_blank"
+                    rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

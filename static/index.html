@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureVault - File Storage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Home Header -->
+        <header class="home-header animate-fade">
+            <h1>Online Docs</h1>
+        </header>
+
+        <!-- Quick Share Section (Send-Anywhere style) -->
+        <div class="quick-share-wrapper split-layout" style="margin-top: 1rem;">
+            <!-- Send File (Generate Pin) -->
+            <div id="quickSendForm" class="auth-card glass animate-fade" style="box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.4);">
+                <h2><i class="fas fa-paper-plane" style="margin-right: 10px; color: var(--primary);"></i>Quick Send</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Instantly share a file. No account needed.<br><span style="color: var(--danger); font-size: 0.85rem; display: inline-block; margin-top: 0.5rem;">*Max 500MB. Single-use download. Expires in 5 minutes.</span></p>
+                <form id="formQuickSend">
+                    <div class="form-group">
+                        <div class="mini-upload-zone" id="quickSendDropZone" onclick="document.getElementById('quickSendFile').click()">
+                            <div style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary);"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <span id="quickSendText" style="font-weight: 500;">Click or Drop file here</span>
+                        </div>
+                        <input type="file" id="quickSendFile" class="hidden" required>
+                    </div>
+                    
+                    <div id="quickSendArea" class="hidden" style="text-align: center; margin-bottom: 1.5rem; animation: fadeIn 0.5s;">
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Your 6-Digit Share Key:</p>
+                        <div id="quickSendResultKey" style="font-size: 3rem; font-weight: bold; letter-spacing: 0.5rem; color: var(--primary); background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px;">000000</div>
+                    </div>
+
+                    <div id="quickSendError" class="error-message" style="margin-bottom: 1rem;"></div>
+                    <button type="submit" class="btn btn-primary" id="btnQuickSend">Get 6-Digit Key</button>
+                </form>
+            </div>
+
+            <!-- Receive File (Use Pin) -->
+            <div id="quickReceiveForm" class="auth-card glass animate-fade delay-1">
+                <h2><i class="fas fa-download" style="margin-right: 10px; color: var(--secondary);"></i>Quick Receive</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Enter a 6-digit key to securely download a file.</p>
+                <form id="formQuickReceive" style="display: flex; flex-direction: column; height: calc(100% - 6rem);">
+                    <div class="form-group text-center" style="margin-bottom: 2rem;">
+                        <input type="text" id="receiveKey" class="form-control" placeholder="000000" maxlength="6" style="font-size: 2.5rem; text-align: center; letter-spacing: 0.5rem; font-weight: bold; padding: 1.5rem;" required autocomplete="off">
+                    </div>
+                    <div id="receiveError" class="error-message" style="margin-bottom: 1rem;"></div>
+                    <div id="receiveSuccess" class="success-message" style="margin-bottom: 1rem;"></div>
+                    <button type="submit" class="btn btn-secondary" id="btnReceive" style="margin-top: auto;">Download File</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="animate-fade delay-2" style="text-align: center; margin: 3rem 0; position: relative;">
+            <hr style="border-color: var(--border-color); opacity: 0.5;">
+            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-color); padding: 0 15px; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; letter-spacing: 1px;">OR CREATE ONLINE VAULT</span>
+        </div>
+
+        <div class="auth-wrapper split-layout" style="margin-top: 0;">
+
+            <!-- Create Vault & Upload Form -->
+            <div id="createVaultForm" class="auth-card glass animate-fade">
+                <h2>Create Vault & Upload</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Pick a unique name, set a password, and add
+                    your files. That's it.</p>
+                <form id="formCreateVault">
+                    <div class="form-group">
+                        <label>Vault Name (Username)</label>
+                        <input type="text" id="regUsername" class="form-control" placeholder="e.g., MySecretVault123"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="regPassword" class="form-control"
+                            placeholder="Create a strong password" required>
+                    </div>
+
+                    <!-- Mini Drag/Drop for initial files -->
+                    <div class="form-group">
+                        <label>Files to Vault (Optional) <span style="font-size: 0.8rem; color: var(--danger); font-weight: normal; margin-left: 0.5rem;">*Max 100MB, expires in 48h</span></label>
+                        <div class="mini-upload-zone" id="miniDropZone"
+                            onclick="document.getElementById('regFiles').click()">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">☁️</div>
+                            <span id="miniUploadText">Click or Drop files here</span>
+                        </div>
+                        <input type="file" id="regFiles" multiple class="hidden">
+                    </div>
+
+                    <div id="regError" class="error-message"></div>
+                    <div id="regSuccess" class="success-message"></div>
+
+                    <button type="submit" class="btn btn-primary" id="btnCreate">Create Vault & Upload</button>
+                </form>
+            </div>
+
+            <!-- Access Vault Form -->
+            <div id="accessVaultForm" class="auth-card glass animate-fade delay-1">
+                <h2>Access Vault</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Already have a vault? Enter your details to
+                    view/download files.</p>
+                <form id="formAccessVault">
+                    <div class="form-group">
+                        <label>Vault Name (Username)</label>
+                        <input type="text" id="loginUsername" class="form-control" placeholder="Enter vault name"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <div id="loginError" class="error-message"></div>
+                    <button type="submit" class="btn btn-secondary" id="btnAccess">Unlock Vault</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Dynamic Footer - Updated for specific links only -->
+    <footer class="custom-footer">
+        <div class="footer-top">
+            <div class="social-icons">
+                <a href="https://www.instagram.com/_1rayuga_?igsh=MWRtYmxxOWh3MjY2eg==" class="social-icon"
+                    target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                <a href="https://github.com/kisan2208" class="social-icon" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-github"></i></a>
+                <a href="https://youtube.com/@go_beats?si=0_vX-jk1F7nc813b" class="social-icon" target="_blank"
+                    rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="/js/app.js"></script>
+</body>
+
+</html>
