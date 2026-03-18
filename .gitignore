@@ -1,0 +1,24 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables
+.env
+
+# Local database
+database.db
+
+# Local uploads
+uploads/
+
+# Large test files
+*.zip
+*.rar
+
+# IDE
+.vscode/
+.idea/
