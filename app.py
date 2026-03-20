@@ -28,7 +28,7 @@ def internal_error(e):
     return jsonify({'error': 'Internal server error. Please try again.'}), 500
 
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx', 'txt', 'mp4', 'mp3', 'zip', 'rar'}
+ALLOWED_EXTENSIONS = set()  # Not used anymore
 MAX_CONTENT_LENGTH = 500 * 1024 * 1024  # 500 MB max globally (vault limited in routes)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -89,8 +89,7 @@ _cleanup_thread = threading.Thread(target=_background_cleanup, daemon=True)
 _cleanup_thread.start()
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.strip() != ''
 
 # ==========================================
 # STATIC FILE ROUTES
@@ -139,7 +138,8 @@ def create_vault():
                     s3_client.upload_fileobj(
                         file.stream,
                         os.environ.get('B2_BUCKET_NAME'),
-                        unique_filename
+                        unique_filename,
+                        ExtraArgs={'ContentType': file.content_type or 'application/octet-stream'}
                     )
                     
                     file_extension = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'unknown'
@@ -218,7 +218,8 @@ def upload_file(current_user):
         s3_client.upload_fileobj(
             file.stream,
             os.environ.get('B2_BUCKET_NAME'),
-            unique_filename
+            unique_filename,
+            ExtraArgs={'ContentType': file.content_type or 'application/octet-stream'}
         )
         
         file_extension = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'unknown'
@@ -283,7 +284,7 @@ def download_file(current_user, file_id):
             },
             ExpiresIn=3600
         )
-        return redirect(presigned_url)
+        return jsonify({'url': presigned_url}), 200
     except Exception as e:
         return jsonify({'error': 'Failed to fetch file from cloud'}), 500
 
@@ -320,12 +321,16 @@ def view_file_route(current_user, file_id):
         return jsonify({'error': 'File not found or access denied'}), 404
         
     try:
+        import mimetypes
+        content_type = mimetypes.guess_type(file_record["original_filename"])[0] or 'application/octet-stream'
+        
         presigned_url = s3_client.generate_presigned_url(
             'get_object',
             Params={
                 'Bucket': os.environ.get('B2_BUCKET_NAME'),
                 'Key': file_record['filename'],
-                'ResponseContentDisposition': f'inline; filename="{file_record["original_filename"]}"'
+                'ResponseContentDisposition': f'inline; filename="{file_record["original_filename"]}"',
+                'ResponseContentType': content_type
             },
             ExpiresIn=3600
         )
@@ -364,7 +369,8 @@ def quick_share_send():
         s3_client.upload_fileobj(
             file.stream,
             os.environ.get('B2_BUCKET_NAME'),
-            unique_filename
+            unique_filename,
+            ExtraArgs={'ContentType': file.content_type or 'application/octet-stream'}
         )
         
         file_extension = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'unknown'

@@ -184,15 +184,14 @@ async function downloadFile(id, filename) {
         
         if (!res.ok) throw new Error("Download failed");
         
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
+        const data = await res.json();
+        
         const a = document.createElement('a');
         a.style.display = 'none';
-        a.href = url;
+        a.href = data.url;
         a.download = filename;
         document.body.appendChild(a);
         a.click();
-        window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
     } catch (e) {
         alert("Failed to download file");
